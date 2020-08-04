@@ -1,0 +1,2 @@
+kubectl label ns test1 easyk8s.cn/demo=enabled
+kubectl create -f test/deployment.yaml -n test1

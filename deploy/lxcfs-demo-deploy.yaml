@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lxcfs-demo
+  labels:
+    app: lxcfs-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: lxcfs-demo
+  template:
+    metadata:
+      labels:
+        app: lxcfs-demo
+    spec:
+      containers:
+      - name: lxcfs-demo
+        image: registry.cn-hangzhou.aliyuncs.com/thelastname/python3-alpine:0.2
+        ports:
+        - containerPort: 5000
+        command: [/app/lxcfs-demo.py]
+        imagePullPolicy: Always
+        env:
+        - name: IMAGE_PREFIX
+          value: jmsearcy
+        - name: FLASK_ENV
+          value: development
+        volumeMounts:
+          - name: script
+            mountPath: /app
+          - name: certs
+            mountPath: /app/ssl
+            readOnly: true
+      volumes:
+        - name: script
+          configMap:
+            name: lxcfs-demo-cm
+            defaultMode: 0755
+            items:
+              - key: script
+                path: lxcfs-demo.py
+        - name: certs
+          secret:
+            secretName: lxcfs-demo-certs

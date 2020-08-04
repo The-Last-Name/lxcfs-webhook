@@ -1,0 +1,28 @@
+apiVersion: admissionregistration.k8s.io/v1beta1
+kind: MutatingWebhookConfiguration
+metadata:
+  name: lxcfs-demo
+webhooks:
+  - name: lxcfs-demo.easyk8s.cn
+    clientConfig:
+      service:
+        name: lxcfs-demo-svc
+        namespace: default
+        path: "/"
+      caBundle: $CA_BUNDLE
+    rules:
+      - operations:
+          - CREATE
+          - UPDATE
+        apiGroups:
+          - "apps"
+        apiVersions:
+          - "*"
+        resources:
+          - "deployments"
+          - "statefulsets"
+          - "daemonsets"
+    failurePolicy: Fail
+    namespaceSelector:
+      matchLabels:
+        easyk8s.cn/demo: "enabled"
